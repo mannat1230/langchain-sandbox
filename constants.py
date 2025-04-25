@@ -1,1 +1,0 @@
-openai_key="{secrets.OPENAI_API_KEY}"
