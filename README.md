@@ -1,5 +1,3 @@
-# 🧠 LangChain Sandbox
-
 A personal space to experiment with [LangChain](https://github.com/langchain-ai/langchain) and [OpenAI](https://platform.openai.com/) APIs.
 
 
