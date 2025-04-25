@@ -26,10 +26,17 @@ first_input_prompt=PromptTemplate(
 )
 
 
+# Memory
+
+person_memory = ConversationBufferMemory(input_key='name', memory_key='chat_history')
+fact_memory = ConversationBufferMemory(input_key='fact', memory_key='chat_history')
+another_person_memory = ConversationBufferMemory(input_key='another_person', memory_key='description_history')
+
+
 ## OpenAI LLMs
 
 llm=OpenAI(temperature=0.8) #temperature is a parameter that controls the randomness of the model's output. A higher temperature (e.g., 0.8) makes the output more random, while a lower temperature (e.g., 0.2) makes it more focused and deterministic.
-chain=LLMChain(llm=llm, prompt=first_input_prompt, verbose=True, output_key='fact')
+chain=LLMChain(llm=llm, prompt=first_input_prompt, verbose=True, output_key='fact', memory=person_memory)
 
 
 
@@ -40,7 +47,7 @@ second_input_prompt=PromptTemplate(
     template="Tell me another person with a similar story to {fact}."
 )
 
-chain2=LLMChain(llm=llm, prompt=second_input_prompt, verbose=True, output_key='another_person')
+chain2=LLMChain(llm=llm, prompt=second_input_prompt, verbose=True, output_key='another_person', memory=fact_memory)
 
 
 third_input_prompt=PromptTemplate(
@@ -48,7 +55,7 @@ third_input_prompt=PromptTemplate(
     template="Name and short description of a book where the character has a similar story to {another_person}."
 )
 
-chain3=LLMChain(llm=llm, prompt=third_input_prompt, verbose=True, output_key='book')
+chain3=LLMChain(llm=llm, prompt=third_input_prompt, verbose=True, output_key='book', memory=another_person_memory)
 
 
 
@@ -59,4 +66,10 @@ chains=SequentialChain(chains=[chain, chain2, chain3], input_variables=['name'],
 
 if input_text:
     st.write(chains({'name':input_text}))
+
+    with st.expander('Person Name'):
+        st.info(person_memory.buffer)
+
+    with st.expander('Major Events'):
+        st.info(another_person_memory.buffer)
 
